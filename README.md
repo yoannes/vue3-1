@@ -1,5 +1,7 @@
 # vue3-1
 
+Descrição do projeto
+
 ## Project setup
 ```
 npm install
