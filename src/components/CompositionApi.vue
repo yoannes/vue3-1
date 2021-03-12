@@ -7,6 +7,7 @@
 
 <script>
 import { ref } from 'vue';
+import useAuth from '@/modules/auth';
 
 export default {
   props: {
@@ -14,7 +15,10 @@ export default {
   },
 
   setup(props, { emit }) {
+    const auth = useAuth();
     const a = ref(0);
+
+    console.log('CompositionApi.vue', auth.state.id);
 
     const inc = () => {
       console.log('vamos inc');

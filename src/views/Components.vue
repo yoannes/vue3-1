@@ -15,6 +15,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
+import useAuth from '@/modules/auth';
 import Options from '@/components/Options.vue';
 import CompositionApi from '@/components/CompositionApi.vue';
 
@@ -22,7 +23,10 @@ export default defineComponent({
   components: { Options, CompositionApi },
 
   setup() {
+    const auth = useAuth();
     const total = ref(0);
+
+    console.log('Components.vue', auth.state.name);
 
     const incHandler = () => {
       console.log('total', total.value);
