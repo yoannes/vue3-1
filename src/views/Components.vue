@@ -1,7 +1,17 @@
 <template>
   <div>
     <div>Hello</div>
-    <div>Total: {{ total }}</div>
+
+    {{ listOfCards.length }}
+
+    Pokemons:
+    <div v-if="listOfCards.length" style="border: 1px solid black">
+      <div v-for="card in listOfCards" :key="card.id" class="card">
+        {{ card }}
+      </div>
+    </div>
+
+    <div style="margin-top: 100px">Total: {{ total }}</div>
 
     <options c="Componente options 1" :total="total" @inc="incHandler" />
     <options c="Componente options 2" @inc="incHandler" />
@@ -14,8 +24,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
-import useAuth from '@/modules/auth';
+import { computed, defineComponent, ref } from 'vue';
+import useCards from '@/modules/cards';
 import Options from '@/components/Options.vue';
 import CompositionApi from '@/components/CompositionApi.vue';
 
@@ -23,17 +33,28 @@ export default defineComponent({
   components: { Options, CompositionApi },
 
   setup() {
-    const auth = useAuth();
+    const cards = useCards();
     const total = ref(0);
 
-    console.log('Components.vue', auth.state.name);
+    console.log('Components.cards', cards);
 
+    // Computed functions
+    const listOfCards = computed(() => cards.state.list);
+
+    // Functions
     const incHandler = () => {
       console.log('total', total.value);
       total.value += 1;
     };
 
-    return { total, incHandler };
+    return { total, incHandler, listOfCards };
   },
 });
 </script>
+
+<style lang="scss" scoped>
+.card {
+  border: 1px solid green;
+  margin: 10px;
+}
+</style>
