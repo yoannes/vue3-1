@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="!busy">
     <div>Hello</div>
 
     {{ listOfCards.length }}
@@ -21,6 +21,10 @@
     <composition-api c="Componente composition 2" @inc="incHandler" />
     <composition-api c="Componente composition 3" @inc="incHandler" />
   </div>
+
+  <div v-else>
+    Carregando a super aplicacao web vue master plus enhanced 2
+  </div>
 </template>
 
 <script lang="ts">
@@ -40,6 +44,7 @@ export default defineComponent({
 
     // Computed functions
     const listOfCards = computed(() => cards.state.list);
+    const busy = computed(() => cards.state.busy);
 
     // Functions
     const incHandler = () => {
@@ -47,7 +52,14 @@ export default defineComponent({
       total.value += 1;
     };
 
-    return { total, incHandler, listOfCards };
+    cards.actions.loadCards();
+
+    return {
+      total,
+      incHandler,
+      listOfCards,
+      busy,
+    };
   },
 });
 </script>
