@@ -1,16 +1,23 @@
 <template>
-  <div class="home">
-    Home pos login
-  </div>
+  <div></div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-  name: 'Home',
-  components: {
+  components: { },
 
+  setup() {
+    return {
+
+    };
   },
 });
 </script>
+
+<style lang="scss" scoped>
+.header {
+
+}
+</style>
