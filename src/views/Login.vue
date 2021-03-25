@@ -27,6 +27,7 @@
 </template>
 
 <script lang="ts">
+import useAuth from '@/modules/auth';
 import {
  defineComponent, reactive, ref, toRefs,
 } from 'vue';
@@ -35,6 +36,7 @@ export default defineComponent({
   components: {},
 
   setup() {
+    const auth = useAuth();
     const usernameEl = ref();
     const passwordEl = ref();
     const state = reactive({
@@ -42,8 +44,15 @@ export default defineComponent({
       password: '',
     });
 
-    const login = () => {
+    const login = async () => {
       console.log('vamos fazer o login', state.username, state.password);
+      if (state.username && state.password) {
+        const res = await auth.actions.login(state.username, state.password);
+
+        if (res.status === 'WRONG_USER') {
+          // seta uma msg de erro
+        }
+      }
     };
 
     const usernameHandler = (e: KeyboardEvent) => {
