@@ -1,6 +1,8 @@
 <template>
   <div class="home">
-    Home pos login
+    Bom dia usuario, seja bem vindo a super loja de cards Pokemon
+
+    <div>lista dos pokemons</div>
   </div>
 </template>
 
