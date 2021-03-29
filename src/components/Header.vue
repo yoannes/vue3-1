@@ -2,18 +2,41 @@
   <div class="header">
     <router-link to="/">Home</router-link> |
     <router-link to="/about">About</router-link> |
-    <router-link to="/login">Login</router-link>
+
+    <span v-if="!isLoggedIn">
+       <router-link to="/login">Login</router-link>
+    </span>
+
+    <span v-else>
+      Bem vindo: <strong>{{username}}</strong> |
+      <span @click="logoutHandler">Logout</span>
+    </span>
+
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import useAuth from '@/modules/auth';
+import { computed, defineComponent } from 'vue';
 
 export default defineComponent({
   components: {},
 
   setup() {
-    return {};
+    const auth = useAuth();
+
+    const isLoggedIn = computed(() => auth.state.token);
+    const username = computed(() => auth.state.username);
+
+    const logoutHandler = () => {
+      auth.actions.logout();
+    };
+
+    return {
+      isLoggedIn,
+      username,
+      logoutHandler,
+    };
   },
 });
 </script>

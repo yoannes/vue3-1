@@ -6,7 +6,24 @@ const user = {
   status: 'Ok',
 };
 
-// eslint-disable-next-line import/prefer-default-export
+export const Signup = async (name: string, username: string, password: string) => {
+  console.log('signup');
+
+  user.name = name;
+  user.username = username;
+  user.password = password;
+
+  return {
+    status: 'OK',
+    result: {
+      id: user.id,
+      name: user.name,
+      username: user.username,
+      token: 'superUltraLongToken',
+    },
+  };
+};
+
 export const Login = async (username: string, password: string) => {
   if (username !== user.username) {
     return { status: 'WRONG_USER' };
