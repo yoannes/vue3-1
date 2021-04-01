@@ -1,5 +1,12 @@
 <template>
   <div class="login">
+    <div>Name</div>
+    <input
+      v-model="name"
+      type="text"
+      @keyup="nameHandler"
+    />
+
     <div>Username</div>
     <input
       v-model="username"
@@ -39,6 +46,7 @@
 </template>
 
 <script lang="ts">
+import useAuth from '@/modules/auth';
 import {
  defineComponent, reactive, ref, toRefs,
 } from 'vue';
@@ -47,17 +55,19 @@ export default defineComponent({
   components: {},
 
   setup() {
+    const auth = useAuth();
     const usernameEl = ref();
     const password1El = ref();
     const password2El = ref();
     const state = reactive({
+      name: '',
       username: '',
       password1: '',
       password2: '',
       error: { type: '', msg: '' },
     });
 
-    const signup = () => {
+    const signup = async () => {
       state.error.type = '';
       state.error.msg = '';
 
@@ -80,6 +90,17 @@ export default defineComponent({
       }
 
       console.log('vamos fazer o signup', state.username, state.password1);
+      const res = await auth.actions.signup(state.name, state.username, state.password1);
+      if (res.status === 'OK') {
+        console.log('ok');
+      }
+      // verifica se tem erro e mostra na tela
+    };
+
+    const nameHandler = (e: KeyboardEvent) => {
+      if (e.key === 'Enter' && state.name) {
+        usernameEl.value.focus();
+      }
     };
 
     const usernameHandler = (e: KeyboardEvent) => {
@@ -103,6 +124,7 @@ export default defineComponent({
     return {
       ...toRefs(state),
       signup,
+      nameHandler,
       usernameHandler,
       passwordHandler,
       usernameEl,

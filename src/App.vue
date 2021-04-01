@@ -14,13 +14,7 @@ export default defineComponent({
   setup() {
     const auth = useAuth();
 
-    console.log(auth);
-
-    if (auth.state.token) {
-      console.log('Esta logado');
-    } else {
-      console.log('Nao esta logado');
-    }
+    auth.actions.loadUserData();
 
     return {};
   },
