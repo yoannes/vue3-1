@@ -1,17 +1,37 @@
+import axios from 'axios';
 import { reactive, readonly } from 'vue';
 
 // ------------------ Interfaces ---------------------- //
+
+interface Sprite {
+  frontDefault: string;
+}
+
 interface Card {
   id: number;
   name: string;
-  price: number;
-  attack: number;
-  defence: number;
+  sprites: Sprite;
+  abilities?: [];
+  baseExperience?: number;
+  forms?: [];
+  gameIndices?: [];
+  height?: number;
+  heldItems?: [];
+  is_default?: boolean;
+  locationAreaEncounters?: string;
+  moves?: [];
+  order?: number;
+  pastTypes?: [];
+  species?: {};
+  stats?: [];
+  types?: [];
+  weight?: number;
 }
 
 interface State {
   list: Card[];
   busy: boolean;
+  nextUrl: string;
 }
 // ---------------------------------------------------- //
 
@@ -19,6 +39,7 @@ interface State {
 const state: State = reactive({
   list: [],
   busy: false,
+  nextUrl: '',
 });
 // ---------------------------------------------------- //
 
@@ -36,9 +57,9 @@ const mutations = {
     const newCard: Card = {
       id: card.id,
       name: card.name,
-      price: card.price,
-      attack: card.attack,
-      defence: card.defence,
+      sprites: {
+        frontDefault: card.sprites.front_default,
+      },
     };
 
     // Se existir -> edita;
@@ -49,49 +70,43 @@ const mutations = {
       state.list[idx] = newCard;
     }
   },
+
+  setNextUrl(url: string) {
+    state.nextUrl = url;
+  },
 };
 // ---------------------------------------------------- //
 
 // --------------------- Actions ---------------------- //
 const actions = {
-  loadCards() {
+  async loadCards() {
     mutations.setBusy(true);
 
-    const mockData = [
-      {
-        id: 1,
-        name: 'Pikachu',
-        price: 10,
-        attack: 5,
-        defence: 10,
-        url: '',
-      },
-      {
-        id: 2,
-        name: 'Bulbasaur',
-        price: 10,
-        attack: 5,
-        defence: 10,
-      },
-      {
-        id: 3,
-        name: 'Charmander',
-        price: 10,
-        attack: 5,
-        defence: 10,
-      },
-    ];
+    const res = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=5&offset=0');
+    console.log(res.data);
 
-    console.log('Vamos carregar os cards');
+    mutations.setNextUrl(res.data.next);
 
-    setTimeout(() => {
-      console.log('depois de 1s');
-      mockData.forEach((card) => {
+    actions.loadPokemon(res.data.results);
+  },
+
+  async loadMore() {
+    axios.get(state.nextUrl).then((res) => {
+      console.log(res);
+
+      mutations.setNextUrl(res.data.next);
+      actions.loadPokemon(res.data.results);
+    });
+  },
+
+  async loadPokemon(results: any) {
+    results.forEach((pokemon: any) => {
+      console.log(pokemon);
+      axios.get(pokemon.url).then((p) => {
+        const card = p.data;
         mutations.processCard(card);
       });
-
-      mutations.setBusy(false);
-    }, 5000);
+    });
   },
 };
 // ---------------------------------------------------- //
