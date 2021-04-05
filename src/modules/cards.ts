@@ -7,7 +7,7 @@ interface Sprite {
   frontDefault: string;
 }
 
-interface Card {
+export interface Card {
   id: number;
   name: string;
   sprites: Sprite;
@@ -83,7 +83,7 @@ const actions = {
     mutations.setBusy(true);
 
     const res = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=5&offset=0');
-    console.log(res.data);
+    // console.log(res.data);
 
     mutations.setNextUrl(res.data.next);
 
@@ -92,7 +92,7 @@ const actions = {
 
   async loadMore() {
     axios.get(state.nextUrl).then((res) => {
-      console.log(res);
+      // console.log(res);
 
       mutations.setNextUrl(res.data.next);
       actions.loadPokemon(res.data.results);
@@ -101,7 +101,7 @@ const actions = {
 
   async loadPokemon(results: any) {
     results.forEach((pokemon: any) => {
-      console.log(pokemon);
+      // console.log(pokemon);
       axios.get(pokemon.url).then((p) => {
         const card = p.data;
         mutations.processCard(card);
