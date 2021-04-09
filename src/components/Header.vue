@@ -4,16 +4,21 @@
     <router-link to="/about">About</router-link> |
 
     <span v-if="!isLoggedIn">
-       <router-link to="/login">Login</router-link>
+      <router-link to="/login">Login</router-link>
     </span>
 
     <span v-else>
-      Bem vindo: <strong>{{username}}</strong> |
+      Bem vindo: <strong>{{ username }}</strong> |
       <span @click="logoutHandler">Logout</span>
     </span>
 
-    <div class="header-balance">Balance: <strong>{{balance}}</strong></div>
+    <div class="header-balance">
+      Balance: <strong>{{ balance }}</strong> |
 
+      <router-link :to="{ name: 'Checkout' }">
+        Cart: <strong>{{ cartCount }}</strong>
+      </router-link>
+    </div>
   </div>
 </template>
 
@@ -32,6 +37,7 @@ export default defineComponent({
     const isLoggedIn = computed(() => auth.state.token);
     const username = computed(() => auth.state.username);
     const balance = computed(() => me.state.balance);
+    const cartCount = computed(() => me.state.cart.length);
 
     const logoutHandler = () => {
       auth.actions.logout();
@@ -41,6 +47,7 @@ export default defineComponent({
       isLoggedIn,
       username,
       balance,
+      cartCount,
       logoutHandler,
     };
   },

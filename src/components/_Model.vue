@@ -17,7 +17,5 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.header {
 
-}
 </style>
