@@ -1,5 +1,5 @@
 <template>
-  <div class="btn" @click="clickHandler">
+  <div class="btn">
     <slot />
   </div>
 </template>
@@ -10,15 +10,8 @@ import { defineComponent } from 'vue';
 export default defineComponent({
   components: {},
 
-  setup(props, { emit }) {
-    const clickHandler = () => {
-      emit('click');
-    };
-
-    return {
-      clickHandler,
-
-    };
+  setup() {
+    return {};
   },
 });
 </script>
@@ -30,5 +23,6 @@ export default defineComponent({
   background: cyan;
   width: 150px;
   padding: 5px 10px 5px 10px;
+  text-align: center;
 }
 </style>

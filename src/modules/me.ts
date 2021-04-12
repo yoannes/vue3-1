@@ -4,14 +4,14 @@ import { Card } from './cards';
 
 export interface State {
   list: Card[];
-  checkout: Card[];
+  cart: Card[];
   balance: number;
 }
 
 // --------------------- State ------------------------ //
 const state: State = reactive({
   list: [],
-  checkout: [],
+  cart: [],
   balance: 0,
 });
 // ---------------------------------------------------- //
@@ -20,6 +20,17 @@ const state: State = reactive({
 const mutations = {
   setBalance(newBalance: number) {
     state.balance = newBalance;
+  },
+
+  addCardToCart(card: Card) {
+    state.cart.push(card);
+  },
+
+  removeCardFromCart(cardId: number) {
+    const idx = state.cart.findIndex((card) => card.id === cardId);
+    if (idx > -1) {
+      state.cart.splice(idx, 1);
+    }
   },
 };
 // ------------------------------------------------------ //
@@ -43,5 +54,6 @@ export default function useMe() {
   return readonly({
     state,
     actions,
+    mutations,
   });
 }
