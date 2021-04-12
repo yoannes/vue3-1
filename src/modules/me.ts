@@ -1,5 +1,5 @@
+import { reactive, readonly, computed } from 'vue';
 import { getMe } from '@/mockServer/server';
-import { reactive, readonly } from 'vue';
 import { Card } from './cards';
 
 export interface State {
@@ -47,6 +47,49 @@ const actions = {
 
     return false;
   },
+
+  async buy() {
+    const body = {
+      cards: state.cart.map((card: Card) => card.id),
+    };
+
+    // TODO: Aqui foi chamada pro servidor e voltou ok.
+
+    body.cards.forEach((cardId) => {
+      const cardIdx = state.cart.findIndex((c) => c.id === cardId);
+      console.log(cardId, state.cart[cardIdx]);
+
+      // 1. Adicionar o card na lista do usuário
+      state.list.push(state.cart[cardIdx]);
+
+      // 2. Remover o card do carrinho
+      state.cart.splice(cardIdx, 1);
+    });
+
+    return 'OK';
+  },
+
+  async sell(card: Card) {
+    const body = {
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      card_id: card.id,
+    };
+
+    // TODO: Aqui foi chamada pro servidor e voltou ok.
+
+    const cardIdx = state.list.findIndex((c) => c.id === card.id);
+
+    // 1. Remover o card da list do user
+    state.list.splice(cardIdx, 1);
+  },
+};
+// ---------------------------------------------------- //
+
+// --------------------- Getters ---------------------- //
+const getters = {
+  sortedList() {
+    return computed(() => state.list.sort((a, b) => a.id - b.id));
+  },
 };
 // ---------------------------------------------------- //
 
@@ -55,5 +98,6 @@ export default function useMe() {
     state,
     actions,
     mutations,
+    getters,
   });
 }
