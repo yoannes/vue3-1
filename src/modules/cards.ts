@@ -79,7 +79,7 @@ const mutations = {
 };
 // ---------------------------------------------------- //
 
-// --------------------- Actions ---------------------- //
+// --------------------- Getters ---------------------- //
 const getters = {
   sortedList() {
     return computed(() => state.list.sort((a, b) => a.id - b.id));
