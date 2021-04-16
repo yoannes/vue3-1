@@ -93,11 +93,12 @@ const actions = {
     mutations.setBusy(true);
 
     const res = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=5&offset=0');
-    // console.log(res.data);
 
     mutations.setNextUrl(res.data.next);
 
-    actions.loadPokemon(res.data.results);
+    res.data.results.forEach((pokemon: any) => {
+      actions.loadPokemon(pokemon.url);
+    });
   },
 
   async loadMore() {
@@ -105,19 +106,27 @@ const actions = {
       // console.log(res);
 
       mutations.setNextUrl(res.data.next);
-      actions.loadPokemon(res.data.results);
+
+      res.data.results.forEach((pokemon: any) => {
+        actions.loadPokemon(pokemon.url);
+      });
     });
   },
 
-  async loadPokemon(results: any) {
-    results.forEach((pokemon: any) => {
-      // console.log(pokemon);
-      axios.get(pokemon.url).then((p) => {
-        const card = p.data;
-        card.price = Math.floor(Math.random() * 100);
-        mutations.processCard(card);
-      });
-    });
+  async loadPokemon(url: string) {
+    const p = await axios.get(url);
+
+    const card = p.data;
+    card.price = Math.floor(Math.random() * 100);
+    mutations.processCard(card);
+
+    // results.forEach((pokemon: any) => {
+    //   axios.get(pokemon.url).then((p) => {
+    //     const card = p.data;
+    //     card.price = Math.floor(Math.random() * 100);
+    //     mutations.processCard(card);
+    //   });
+    // });
   },
 };
 // ---------------------------------------------------- //

@@ -1,6 +1,8 @@
 import { reactive, readonly, computed } from 'vue';
-import { getMe } from '@/mockServer/server';
-import { Card } from './cards';
+import { buy, getMe, sell } from '@/mockServer/server';
+import useCards, { Card } from './cards';
+
+const cards = useCards();
 
 export interface State {
   list: Card[];
@@ -20,6 +22,25 @@ const state: State = reactive({
 const mutations = {
   setBalance(newBalance: number) {
     state.balance = newBalance;
+  },
+
+  async setUserCards(newCards: any) {
+    for (let i = 0; i < newCards.length; i++) {
+      const _card = newCards[i];
+
+      // Busca card do state
+      let card = cards.state.list.find((x) => x.id === _card.id);
+      if (!card) {
+        // Se nao achar, busca card no API
+        await cards.actions.loadPokemon(`https://pokeapi.co/api/v2/pokemon/${_card.id}/`);
+        card = cards.state.list.find((x) => x.id === _card.id);
+      }
+
+      state.list.push({
+        ...card,
+        price: _card.price,
+      } as Card);
+    }
   },
 
   addCardToCart(card: Card) {
@@ -42,6 +63,7 @@ const actions = {
     const res = await getMe();
     if (res.status === 'OK') {
       mutations.setBalance(res.result.balance);
+      mutations.setUserCards(res.result.cards);
       return true;
     }
 
@@ -50,37 +72,47 @@ const actions = {
 
   async buy() {
     const body = {
-      cards: state.cart.map((card: Card) => card.id),
+      cards: state.cart.map((card: Card) => ({
+        id: card.id,
+        price: card.price,
+      })),
     };
 
-    // TODO: Aqui foi chamada pro servidor e voltou ok.
+    const res = await buy(body);
+    console.log('res', res);
+    if (res.status === 'OK') {
+      body.cards.forEach((card) => {
+        const cardIdx = state.cart.findIndex((c) => c.id === card.id);
+        console.log(card.id, state.cart[cardIdx]);
 
-    body.cards.forEach((cardId) => {
-      const cardIdx = state.cart.findIndex((c) => c.id === cardId);
-      console.log(cardId, state.cart[cardIdx]);
+        // 1. Adicionar o card na lista do usuário
+        state.list.push(state.cart[cardIdx]);
 
-      // 1. Adicionar o card na lista do usuário
-      state.list.push(state.cart[cardIdx]);
+        // 2. Remover o card do carrinho
+        state.cart.splice(cardIdx, 1);
+      });
 
-      // 2. Remover o card do carrinho
-      state.cart.splice(cardIdx, 1);
-    });
+      mutations.setBalance(res.result.balance);
+    }
 
-    return 'OK';
+    return res.status;
   },
 
   async sell(card: Card) {
     const body = {
       // eslint-disable-next-line @typescript-eslint/camelcase
       card_id: card.id,
+      price: card.price,
     };
 
-    // TODO: Aqui foi chamada pro servidor e voltou ok.
+    const res = await sell(body);
+    if (res.status === 'OK') {
+      const cardIdx = state.list.findIndex((c) => c.id === card.id);
 
-    const cardIdx = state.list.findIndex((c) => c.id === card.id);
-
-    // 1. Remover o card da list do user
-    state.list.splice(cardIdx, 1);
+      // 1. Remover o card da list do user
+      state.list.splice(cardIdx, 1);
+      mutations.setBalance(res.result.balance);
+    }
   },
 };
 // ---------------------------------------------------- //
