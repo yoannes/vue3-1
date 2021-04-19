@@ -1,0 +1,37 @@
+.__carrossel-container {
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+
+.__carrossel-img-container {
+  width: 100%;
+  height: inherit;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
+
+.__carrossel-img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.__carrossel-move-left {
+  cursor: pointer;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  text-align: center;
+  background: grey;
+}
+
+.__carrossel-move-right {
+  cursor: pointer;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  background: grey;
+  text-align: center;
+}
